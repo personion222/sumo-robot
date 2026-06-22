@@ -1,0 +1,91 @@
+#Chip 16f15323, 32
+#Option Explicit
+
+#define bot_detect PortA.1
+#define line_detect PortA.0
+
+Dir bot_detect In
+Dir line_detect In
+
+INLVLA0 = 0
+
+#define motor_left_fwd PortC.0
+#define motor_left_rev PortC.1
+#define motor_right_fwd PortC.2
+#define motor_right_rev PortC.3
+
+Dir motor_left_fwd Out
+Dir motor_left_rev Out
+
+Dir motor_right_fwd Out
+Dir motor_right_rev Out
+
+motor_left_fwd = 0
+motor_left_rev = 0
+motor_right_fwd = 0
+motor_right_rev = 0
+
+Sub left_fwd()
+	motor_left_fwd = 1
+	motor_left_rev = 0
+End Sub
+
+Sub left_rev()
+	motor_left_fwd = 0
+	motor_left_rev = 1
+End Sub
+
+Sub right_fwd()
+	motor_right_fwd = 1
+	motor_right_rev = 0
+End Sub
+
+Sub right_rev()
+	motor_right_fwd = 0
+	motor_right_rev = 1
+End Sub
+
+Sub turn_left()
+	left_rev
+	right_fwd
+End Sub
+
+Sub turn_right()
+	left_fwd
+	right_rev
+End Sub
+
+Sub move_forward()
+	left_fwd
+	right_fwd
+End Sub
+
+Sub move_backward()
+	left_rev
+	right_rev
+End Sub
+
+' gm2: 37.5 rpm (360 deg in 1.6 sec)
+' wheel diameter: 50 mm
+' wheel circumference: 157 mm
+' bot speed: 37.5 * 157 = 5887 mm/min = 98 mm/sec
+' bot diameter (wheel): 164 mm
+' bot radius (wheel): 72 mm
+' bot circumference (wheel): 515 mm
+' bot rotation time: 515 / 98 = 5.25 sec
+' bot half rotation time: 5.25 / 2 = 2.63 sec = 2627 ms
+' bot radius movement time: 132 / 98 = 1.35 sec = 1347 ms
+' coulda done ts parametrically but i like doing math by hand (read: i hate gcbasic)
+
+Do Forever
+	If line_detect = 0 Then ' bot on white
+		move_backward
+		Wait 1347 ms
+		turn_right
+		Wait 2627 ms
+	Else If bot_detect = 0 Then ' bot other bot detected
+		move_forward
+	Else ' no bot and on black, start search
+		turn_right
+	End If
+Loop
