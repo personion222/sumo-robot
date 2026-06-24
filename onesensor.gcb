@@ -75,7 +75,6 @@ End Sub
 ' bot rotation time: 515 / 98 = 5.25 sec
 ' bot half rotation time: 5.25 / 2 = 2.63 sec = 2627 ms
 ' bot radius movement time: 132 / 98 = 1.35 sec = 1347 ms
-' coulda done ts parametrically but i like doing math by hand (read: i hate gcbasic)
 
 Do Forever
 	If line_detect = 0 Then ' bot on white
